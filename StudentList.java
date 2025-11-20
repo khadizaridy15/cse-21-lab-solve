@@ -5,8 +5,8 @@ import java.util.*;
 public class StudentList {
 	public static void main(String[] args) {
 
-		if (args == null || args[0].length() != 1) {
-			System.out.println("Please provide a, r, ?, +, or c");
+		if (args == null || args.length == 0) {
+			System.out.println("Please provide a command: a, r, ?, +, or c");
 			return;
 		}
 
@@ -74,21 +74,24 @@ public class StudentList {
 
 			System.out.println("Loading data ...");
 
-			try {
-				String words[] = fileContents.split(",");
-				// boolean done = false;
-				String argValue = args[0].substring(1);
+			String[] words = fileContents.split(obj.StudentEntryDelimiter);
+			String argValue = args[0].substring(1);
+			int indexLocation = -1;
 
-				int indexLocation = -1;
-				for (int idx = 0; idx < words.length; idx++) {
-					if (words[idx].trim().equals(argValue)) {
-						indexLocation = idx;
-						break;
-					}
+			for (int idx = 0; idx < words.length; idx++) {
+				if (words[idx].trim().equals(argValue)) {
+					indexLocation = idx;
+					break;
 				}
+			}
 
-			} catch (Exception e) {
+			if (indexLocation >= 0) {
+				System.out.println(String.format("We found it", argValue));
+			}
 
+			else {
+
+				System.out.println(String.format("Not Found", argValue));
 			}
 
 			System.out.println("Data Loaded.");
