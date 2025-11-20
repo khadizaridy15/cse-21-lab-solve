@@ -6,19 +6,21 @@ public class StudentList {
 	public static void main(String[] args) {
 
 		if (args == null || args[0].length() != 1) {
-			System.out.println("Please provide a, r, ?, +, or c argument");
+			System.out.println("Please provide a, r, ?, +, or c");
 			return;
 		}
 
-		String fileContents = LoadData("students.txt");
+		Constants obj = new Constants();
+
+		String fileContents = LoadData(Constants.StudentList);
 
 		// Check arguments
-		if (args[0].equals("a")) {
+		if (args[0].equals(obj.ShowAll)) {
 
 			System.out.println("Loading data ...");
 
 			try {
-				String words[] = fileContents.split(",");
+				String words[] = fileContents.split(obj.StudentEntryDelimiter);
 				for (String word : words) {
 					System.out.println(word);
 				}
@@ -30,12 +32,12 @@ public class StudentList {
 
 		}
 
-		else if (args[0].equals("r")) {
+		else if (args[0].equals(obj.ShowRandom)) {
 
 			System.out.println("Loading data ...");
 
 			try {
-				String words[] = fileContents.split(",");
+				String words[] = fileContents.split(obj.StudentEntryDelimiter);
 				Random random = new Random();
 				int randomIndex = random.nextInt(0, words.length);
 				System.out.println(words[randomIndex]);
@@ -46,20 +48,20 @@ public class StudentList {
 
 		}
 
-		else if (args[0].contains("+")) {
+		else if (args[0].contains(obj.AddEntry)) {
 
 			System.out.println("Loading data ...");
 
 			try {
-				BufferedWriter fileStream = new BufferedWriter(
+				BufferedWriter filestream = new BufferedWriter(
 						new FileWriter("students.txt", true));
 				String argValue = args[0].substring(1);
 				Date date = new Date();
-				String dateFormatObj = "dd/mm/yyyy-hh:mm:ss a";
-				DateFormat dateFormat = new SimpleDateFormat(dateFormatObj);
-				String formatDate = dateFormat.format(date);
-				fileStream.write(", " + argValue + "\nList last updated on " + formatDate);
-				fileStream.close();
+				String dateFormateObj = "dd/mm/yyyy-hh:mm:ss a";
+				DateFormat dateFormat = new SimpleDateFormat(dateFormateObj);
+				String formateDate = dateFormat.format(date);
+				filestream.write(", " + argValue + "\nList last updated on " + formateDate);
+				filestream.close();
 			} catch (Exception e) {
 
 			}
@@ -68,20 +70,23 @@ public class StudentList {
 
 		}
 
-		else if (args[0].contains("?")) {
+		else if (args[0].contains(obj.FindEntry)) {
 
 			System.out.println("Loading data ...");
 
 			try {
 				String words[] = fileContents.split(",");
-				boolean done = false;
+				// boolean done = false;
 				String argValue = args[0].substring(1);
-				for (int idx = 0; idx < words.length && !done; idx++) {
-					if (words[idx].equals(argValue)) {
-						System.out.println("We found it!");
-						done = true;
+
+				int indexLocation = -1;
+				for (int idx = 0; idx < words.length; idx++) {
+					if (words[idx].trim().equals(argValue)) {
+						indexLocation = idx;
+						break;
 					}
 				}
+
 			} catch (Exception e) {
 
 			}
@@ -90,7 +95,7 @@ public class StudentList {
 
 		}
 
-		else if (args[0].contains("c")) {
+		else if (args[0].contains(obj.ShowCount)) {
 
 			System.out.println("Loading data ...");
 
@@ -99,8 +104,8 @@ public class StudentList {
 				boolean in_word = false;
 				int count = 0;
 
-				for (char c : characters) {
-					if (c == ' ') {
+				for (char character : characters) {
+					if (character == ' ') {
 						if (!in_word) {
 							count++;
 							in_word = true;
