@@ -5,129 +5,155 @@ import java.util.*;
 public class StudentList {
 	public static void main(String[] args) {
 
+		// Check if command is missing
 		if (args.length == 0) {
             System.out.println("Please provide a command: a, r, ?, +, or c");
             return;
         }
 
-		Constants obj = new Constants();
+		// Load student list from file
+		String fileContents = LoadData("students.txt");
 
-		String fileContents = LoadData(Constants.StudentList);
-
-		// Check arguments
-		if (args[0].equals(obj.ShowAll)) {
+		// Command: Show all students
+		if (args[0].equals("a")) {
 
 			System.out.println("Loading data ...");
 
 			try {
-				String words[] = fileContents.split(obj.StudentEntryDelimiter);
+				// Split names by comma
+				String words[] = fileContents.split(",");
 				for (String word : words) {
 					System.out.println(word);
 				}
-			} catch (Exception e) {
-
-			}
+			} catch (Exception e) {}
 
 			System.out.println("Data Loaded.");
-
 		}
 
-		else if (args[0].equals(obj.ShowRandom)) {
+		// Command: Show random student
+		else if (args[0].equals("r")) {
 
 			System.out.println("Loading data ...");
 
 			try {
-				String words[] = fileContents.split(obj.StudentEntryDelimiter);
+				String words[] = fileContents.split(",");
+				// Generate random index
 				Random random = new Random();
 				int randomIndex = random.nextInt(0, words.length);
 				System.out.println(words[randomIndex]);
-			} catch (Exception e) {
+			} catch (Exception e) {}
 
-			}
 			System.out.println("Data Loaded.");
-
 		}
 
-		else if (args[0].contains(obj.AddEntry)) {
+		// Command: Add new student
+		else if (args[0].contains("+")) {
 
 			System.out.println("Loading data ...");
 
 			try {
-				BufferedWriter filestream = new BufferedWriter(
+				// Open file in append mode
+				BufferedWriter fileStream = new BufferedWriter(
 						new FileWriter("students.txt", true));
+
+				// Extract name after '+'
 				String argValue = args[0].substring(1);
+
+				// Format date-time
 				Date date = new Date();
-				String dateFormateObj = "dd/mm/yyyy-hh:mm:ss a";
-				DateFormat dateFormat = new SimpleDateFormat(dateFormateObj);
-				String formateDate = dateFormat.format(date);
-				filestream.write(", " + argValue + "\nList last updated on " + formateDate);
-				filestream.close();
-			} catch (Exception e) {
+				String dateFormatObj = "dd/mm/yyyy-hh:mm:ss a";
+				DateFormat dateFormat = new SimpleDateFormat(dateFormatObj);
+				String formatDate = dateFormat.format(date);
 
-			}
+				// Write name + update time
+				fileStream.write(", " + argValue + "\nList last updated on " + formatDate);
+				fileStream.close();
+
+			} catch (Exception e) {}
 
 			System.out.println("Data Loaded.");
-
 		}
 
-		else if (args[0].contains(obj.FindEntry)) {
+		// Command: Search for a student
+		else if (args[0].contains("?")) {
 
 			System.out.println("Loading data ...");
 
-			String[] words = fileContents.split(obj.StudentEntryDelimiter);
-			String argValue = args[0].substring(1);
-			int indexLocation = -1;
+			try {
+				String words[] = fileContents.split(",");
+				boolean done = false;
 
-			for (int idx = 0; idx < words.length; idx++) {
-				if (words[idx].trim().equals(argValue)) {
-					indexLocation = idx;
-					break;
+				// Extract name after '?'
+				String argValue = args[0].substring(1);
+
+				// Loop through list
+				for (int idx = 0; idx < words.length && !done; idx++) {
+					if (words[idx].equals(argValue)) {
+						System.out.println("We found it!");
+						done = true;
+					}
 				}
-			}
 
-			if (indexLocation >= 0) {
-				System.out.println(String.format("We found it", argValue));
-			}
-
-			else {
-
-				System.out.println(String.format("Not Found", argValue));
-			}
+			} catch (Exception e) {}
 
 			System.out.println("Data Loaded.");
-
 		}
 
-		else if (args[0].contains(obj.ShowCount)) {
+		// Command: Count words
+		else if (args[0].contains("c")) {
 
 			System.out.println("Loading data ...");
 
-			char[] words = fileContents.toCharArray();
-			System.out.println(String.format("%d words found", words.length));
+			try {
+				// Convert file content to characters
+				char characters[] = fileContents.toCharArray();
+				boolean in_word = false;
+				int count = 0;
+
+				// Simple space-based word count logic
+				for (char c : characters) {
+					if (c == ' ') {
+						if (!in_word) {
+							count++;
+							in_word = true;
+						} else {
+							in_word = false;
+						}
+					}
+				}
+
+				System.out.println(count + " word(s) found " + characters.length);
+
+			} catch (Exception e) {}
 
 			System.out.println("Data Loaded.");
-
 		}
+
 		else {
             System.out.println("Invalid argument! Use a, r, ?, +, or c");
         }
 	}
 
+	// Function to load file content
 	public static String LoadData(String fileName) {
 		BufferedReader fileStream = null;
 		try {
+			// Open file for reading
 			fileStream = new BufferedReader(
 					new InputStreamReader(
 							new FileInputStream("students.txt")));
 		} catch (FileNotFoundException e) {
 			throw new RuntimeException(e);
 		}
+
 		String reader = null;
 		try {
+			// Read first line
 			reader = fileStream.readLine();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
 		return reader;
 	}
 
