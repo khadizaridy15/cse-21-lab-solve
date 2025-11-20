@@ -5,10 +5,10 @@ import java.util.*;
 public class StudentList {
 	public static void main(String[] args) {
 
-		if (args == null || args.length == 0) {
-			System.out.println("Please provide a command: a, r, ?, +, or c");
-			return;
-		}
+		if (args.length == 0) {
+            System.out.println("Please provide a command: a, r, ?, +, or c");
+            return;
+        }
 
 		Constants obj = new Constants();
 
@@ -108,6 +108,9 @@ public class StudentList {
 			System.out.println("Data Loaded.");
 
 		}
+		else {
+            System.out.println("Invalid argument! Use a, r, ?, +, or c");
+        }
 	}
 
 	public static String LoadData(String fileName) {
